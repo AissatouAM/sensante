@@ -3,6 +3,7 @@ sensante - Exploration du dataset patients_dakar .csv
 Lab 1 : Git , Python et Structure Projet
 """
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # ===== CHARGER LES DONNEES =====
 df = pd.read_csv ("data/patients_dakar.csv")
@@ -38,6 +39,13 @@ region_counts = df ["region"]. value_counts () . head (5)
 for region , count in region_counts.items () :
     print ( f"{region:15s} : {count:3d} patients")
 
+# ===== NOMBRE DE PATIENTS PAR SEXE ET PAR DIAGNOSTIC =====
+print(f"\n- - - Nombre de patients par sexe et par diagnostic - - -")
+
+sex_diag = df.groupby(["sexe", "diagnostic"]).size()
+
+print(sex_diag)
+
 # ===== TEMPERATURE MOYENNE PAR DIAGNOSTIC =====
 print ( f"\n- - - Temperature moyenne par diagnostic ---")
 temp_by_diag = df . groupby ("diagnostic") ["temperature"].mean()
@@ -47,3 +55,27 @@ for diag , temp in temp_by_diag . items () :
     print (" Exploration terminee !")
     print (" Prochain lab : entrainer un modele ML")
     print ( f"{ '= ' * 50}")
+
+# Répartition des diagnostics
+df['diagnostic'].value_counts().plot(kind='bar', color=['green','red','blue','orange'])
+plt.title("Répartition des diagnostics")
+plt.xlabel("Diagnostic")
+plt.ylabel("Nombre de patients")
+plt.show()
+
+for diag, color in zip(['sain','paludisme','grippe','typhoïde'], ['green','red','blue','orange']):
+    subset = df[df['diagnostic'] == diag]
+    plt.hist(subset['temperature'], bins=20, alpha=0.5, label=diag, color=color)
+
+plt.title("Température par diagnostic")
+plt.xlabel("Température (°C)")
+plt.ylabel("Fréquence")
+plt.legend()
+plt.show()
+
+# Top 5 régions
+df['region'].value_counts().head(5).plot(kind='bar', color='purple')
+plt.title("Top 5 régions")
+plt.xlabel("Région")
+plt.ylabel("Nombre de patients")
+plt.show()
