@@ -2,8 +2,8 @@
 sensante - Exploration du dataset patients_dakar .csv
 Lab 1 : Git , Python et Structure Projet
 """
-import pandas as pd
-import matplotlib.pyplot as plt
+import pandas as pd #pandas permet de lire le fichier csv et de faire des calculs dessus
+import matplotlib.pyplot as plt #matplotlib permet de faire des graphiques, de faire les statistiques etc
 
 # ===== CHARGER LES DONNEES =====
 df = pd.read_csv ("data/patients_dakar.csv")
