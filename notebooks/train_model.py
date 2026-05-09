@@ -187,3 +187,91 @@ print(f"\nProbabilites par classe :")
 for classe, proba in zip(model_loaded.classes_, probas):
     bar = '#' * int(proba * 30)
     print(f" {classe:8s} : {proba:.1%} {bar}")
+
+
+
+# Exercice 1
+importances = model.feature_importances_
+for name, imp in sorted(zip(feature_cols, importances),
+                          key=lambda x: x[1], reverse=True):
+    print(f" {name:20s} : {imp:.3f}")
+
+# Exercice 2
+
+import pandas as pd
+
+# Trois nouveaux patients arrivent au centre de santé de Medina
+nouveau_patient1 = {
+    'age': 14,
+    'sexe': 'M',
+    'temperature': 37.0,
+    'tension_sys': 110,
+    'toux': False,
+    'fatigue': False,
+    'maux_tete': False,
+    'region': 'Dakar'
+}
+
+nouveau_patient2 = {
+    'age': 28,
+    'sexe': 'F',
+    'temperature': 39.5,
+    'tension_sys': 110,
+    'toux': False,
+    'fatigue': False,
+    'maux_tete': False,
+    'region': 'Dakar'
+}
+
+nouveau_patient3 = {
+    'age': 65,
+    'sexe': 'M',
+    'temperature': 36.5,
+    'tension_sys': 110,
+    'toux': True,
+    'fatigue': False,
+    'maux_tete': False,
+    'region': 'Dakar'
+}
+
+patients = [nouveau_patient1, nouveau_patient2, nouveau_patient3]
+print("\n=== RESULTATS DU PRE-DIAGNOSTIC ===")
+
+for i, patient in enumerate(patients, 1):
+
+    # Encoder les variables catégorielles
+    sexe_enc = le_sexe_loaded.transform([patient['sexe']])[0]
+    region_enc = le_region_loaded.transform([patient['region']])[0]
+
+    # Features
+    features = [
+        patient['age'],
+        sexe_enc,
+        patient['temperature'],
+        patient['tension_sys'],
+        int(patient['toux']),
+        int(patient['fatigue']),
+        int(patient['maux_tete']),
+        region_enc
+    ]
+
+    # Créer DataFrame avec les bons noms
+    X_new = pd.DataFrame([features], columns=model_loaded.feature_names_in_)
+
+    # Prédiction (CORRIGÉ : utiliser X_new)
+    diagnostic = model_loaded.predict(X_new)[0]
+    probas = model_loaded.predict_proba(X_new)[0]
+    proba_max = probas.max()
+
+    # Affichage
+    print(f"\n--- Patient {i} ---")
+    print(f"Profil : {patient['sexe']}, {patient['age']} ans")
+    print(f"Température : {patient['temperature']}°C | Tension : {patient['tension_sys']} mmHg")
+
+    print(f"\nDiagnostic : {diagnostic}")
+    print(f"Probabilité : {proba_max:.1%}")
+
+    print("Probabilités par classe :")
+    for classe, proba in zip(model_loaded.classes_, probas):
+        bar = '#' * int(proba * 30)
+        print(f" {classe:10s} : {proba:.1%} {bar}")
